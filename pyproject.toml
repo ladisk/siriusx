@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sirius-opendaq"
+name = "siriusx"
 version = "0.1.0"
 description = "OpenDAQ-based Python wrapper for Dewesoft Sirius X measurement devices"
 readme = "README.md"
@@ -26,8 +26,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Ladisk/sirius-opendaq"
-Repository = "https://github.com/Ladisk/sirius-opendaq"
+Homepage = "https://github.com/ladisk/siriusx"
+Repository = "https://github.com/ladisk/siriusx"
 
 [tool.setuptools.packages.find]
 where = ["src"]
