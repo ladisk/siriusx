@@ -331,6 +331,11 @@ class SiriusX():
             count=sample_count,
             timeout_ms=int(1000*timeout)
         )
+
+        # check if empty data was received
+        if raw_data.size == 0:
+            return np.array([])
+
         # transpose
         raw_data = raw_data.T
         return raw_data
@@ -356,6 +361,10 @@ class SiriusX():
             sample_count=sample_count,
             timeout=timeout
         )
+
+        if raw_data.size == 0:
+            return np.array([])
+
         # apply sensitivity
         processed_data = []
         for sig_num, ch_num in enumerate(self.channel_settings.keys()):
