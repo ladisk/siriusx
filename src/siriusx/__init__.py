@@ -4,5 +4,5 @@ sirius-opendaq: OpenDAQ-based Python wrapper for Dewesoft Sirius X measurement d
 
 from .core import SiriusX
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = ["SiriusX"]
