@@ -122,7 +122,6 @@ class TestApplySensitivity:
         expected = np.array([10.0, 20.0])
         np.testing.assert_array_almost_equal(result, expected)
 
-    @pytest.mark.xfail(reason="BUG: sens_unit parsing fails for 'mV/(m/s^2)' - splits incorrectly")
     def test_apply_sensitivity_iepe_mvms2_to_g(self, siriusx_with_channel_settings):
         """
         Validates: IEPE signal with mV/(m/s^2) sensitivity converts to g.
@@ -136,11 +135,6 @@ class TestApplySensitivity:
         Prediction:
             [1.0, 2.0] ((signal / sensitivity) / 9.81)
             Because: 98.1mV / 10(mV/(m/s^2)) = 9.81 m/s^2 = 1g
-
-        KNOWN BUG:
-            core.py line ~487: sens_unit.split('/')[-1] fails for 'mV/(m/s^2)'
-            'mV/(m/s^2)'.split('/') = ['mV', '(m', 's^2)'] -> wrong parsing
-            Currently returns [9.81, 19.62] instead of [1.0, 2.0]
         """
         # Arrange
         sx = siriusx_with_channel_settings

@@ -484,7 +484,7 @@ class SiriusX():
         sens = self.channel_settings[ch_num]['Sensitivity']
         unit_output = self.channel_settings[ch_num]['Unit']
         sens_unit = self.channel_settings[ch_num]['Sensitivity Unit']
-        sens_unit_output = sens_unit.split('/')[-1].strip('()')
+        sens_unit_output = sens_unit.split('/', 1)[-1].strip('()')
 
         # apply sensitivity
         processed_signal = signal / sens
