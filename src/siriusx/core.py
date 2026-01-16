@@ -51,8 +51,35 @@ class SiriusX():
         self.device = None
         self.connected = False
         self.sample_rate = None
+        self.multi_reader = None
 
         self.active_signals = set()
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - ensures cleanup."""
+        self.cleanup()
+        return False
+
+    def __del__(self):
+        """Destructor - ensures cleanup on garbage collection."""
+        try:
+            self.cleanup()
+        except Exception:
+            pass  # Ignore errors during destruction
+
+    def cleanup(self):
+        """
+        Clean up all resources (reader, device connection).
+
+        Call this method when done using the device to ensure proper
+        disconnection and resource release.
+        """
+        self.stop_reader()
+        self.disconnect()
 
     def list_available_devices(self, print_devices=True, return_list=False):
         """
@@ -107,7 +134,28 @@ class SiriusX():
             print("Error connecting to device:", e)
             self.connected = False
             return False
-    
+
+    def disconnect(self):
+        """
+        Disconnect from the device and release resources.
+
+        Returns
+        -------
+        bool
+            True if disconnected successfully, False otherwise.
+        """
+        if not self.connected or self.device is None:
+            return True
+
+        try:
+            self.instance.remove_device(self.device)
+            self.device = None
+            self.connected = False
+            return True
+        except Exception as e:
+            print("Error disconnecting from device:", e)
+            return False
+
     def get_sample_rate(self):
         """
         Get current sample rate.
@@ -336,8 +384,13 @@ class SiriusX():
         if raw_data.size == 0:
             return np.array([])
 
-        # transpose
+        # transpose to (samples, channels)
         raw_data = raw_data.T
+
+        # ensure 2D output even for single channel
+        if raw_data.ndim == 1:
+            raw_data = raw_data.reshape(-1, 1)
+
         return raw_data
 
     def read_processed(self, sample_count, timeout):
@@ -390,8 +443,14 @@ class SiriusX():
     def stop_reader(self):
         """
         Stop and clean up the reader.
+
+        This method releases the MultiReader resources. Call this after
+        finishing data acquisition to free up streaming connections.
         """
-        self.multi_reader = None
+        if self.multi_reader is not None:
+            # Explicitly delete to trigger cleanup
+            del self.multi_reader
+            self.multi_reader = None
 
     def acquire_raw(self, sample_count, timeout):
         """
