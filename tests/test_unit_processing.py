@@ -246,3 +246,67 @@ class TestApplySensitivity:
         # Assert
         expected = np.array([2.0, 4.0])
         np.testing.assert_array_almost_equal(result, expected)
+
+    # =========================================================================
+    # EDGE CASE TESTS
+    # =========================================================================
+
+    def test_apply_sensitivity_empty_signal(self, siriusx_with_channel_settings):
+        """
+        Validates: Empty signal array returns empty array.
+
+        Synthetic Input:
+            - signal: [] (empty numpy array)
+            - sensitivity: 100 mV/g
+            - sensitivity_unit: 'mV/g'
+            - output_unit: 'g'
+
+        Prediction:
+            [] (empty array, signal / sensitivity with len=0)
+        """
+        # Arrange
+        sx = siriusx_with_channel_settings
+        sx.channel_settings[0] = {
+            'Sensitivity': 100,
+            'Sensitivity Unit': 'mV/g',
+            'Unit': 'g',
+        }
+        signal = np.array([])
+
+        # Act
+        result = sx._apply_sensitivity(ch_num=0, signal=signal)
+
+        # Assert
+        expected = np.array([])
+        np.testing.assert_array_equal(result, expected)
+        assert len(result) == 0
+
+    def test_apply_sensitivity_zero_sensitivity(self, siriusx_with_channel_settings):
+        """
+        Validates: Zero sensitivity causes division by zero (inf result).
+
+        Synthetic Input:
+            - signal: [100.0, 200.0, -50.0] (mV values)
+            - sensitivity: 0 (zero, invalid but not prevented)
+            - sensitivity_unit: 'mV/g'
+            - output_unit: 'g'
+
+        Prediction:
+            [inf, inf, -inf] (signal / 0 produces inf with appropriate sign)
+        """
+        # Arrange
+        sx = siriusx_with_channel_settings
+        sx.channel_settings[0] = {
+            'Sensitivity': 0,
+            'Sensitivity Unit': 'mV/g',
+            'Unit': 'g',
+        }
+        signal = np.array([100.0, 200.0, -50.0])
+
+        # Act
+        result = sx._apply_sensitivity(ch_num=0, signal=signal)
+
+        # Assert
+        # Division by zero in numpy produces inf (not an exception)
+        expected = np.array([np.inf, np.inf, -np.inf])
+        np.testing.assert_array_equal(result, expected)

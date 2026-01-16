@@ -62,7 +62,6 @@ class TestListAvailableDevices:
                 ("Name:", "SiriusX-2", "Connection string:", "daq.sirius://192.168.1.101")
             ]
             assert result == expected
-            assert len(result) == 2
 
     def test_list_available_devices_returns_none_by_default(self, mock_device_info):
         """
@@ -119,7 +118,6 @@ class TestListAvailableDevices:
 
             # Assert
             assert result == []
-            assert len(result) == 0
 
     def test_list_available_devices_prints_output(self, mock_device_info, capsys):
         """
@@ -235,7 +233,6 @@ class TestListAvailableDevices:
                 ("Name:", "SiriusX-Dev", "Connection string:", "daq.sirius://10.0.0.50")
             ]
             assert result == expected
-            assert len(result) == 1
 
     def test_list_available_devices_both_print_and_return(
         self, mock_device_info, capsys
