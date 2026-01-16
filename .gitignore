@@ -210,6 +210,7 @@ __marimo__/
 CLAUDE.md
 .claude/
 TODO_TESTING.md
+SESSION_NOTES.md
 
 # UV lock file (not all users use uv)
 uv.lock
