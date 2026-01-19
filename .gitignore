@@ -214,3 +214,6 @@ SESSION_NOTES.md
 
 # UV lock file (not all users use uv)
 uv.lock
+
+# Large binary documentation files (download locally, don't commit)
+docs/manuals/*.pdf

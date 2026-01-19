@@ -41,9 +41,47 @@ Example:
 =============================================================================
 """
 
+import os
 import pytest
 from unittest.mock import Mock, MagicMock, patch
 import numpy as np
+
+
+# =============================================================================
+# PYTEST CONFIGURATION FOR HARDWARE TESTS
+# =============================================================================
+
+def pytest_addoption(parser):
+    """Add custom command line options for hardware tests."""
+    parser.addoption(
+        "--hardware",
+        action="store_true",
+        default=False,
+        help="run hardware integration tests (requires Sirius X device)",
+    )
+
+
+def pytest_configure(config):
+    """Configure pytest markers."""
+    config.addinivalue_line(
+        "markers",
+        "hardware: marks tests as requiring Sirius X hardware (deselect with '-m \"not hardware\"')"
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip hardware tests unless --hardware flag is set or env var is set."""
+    if config.getoption("--hardware") or os.environ.get("SIRIUSX_HARDWARE"):
+        # Hardware flag is set, run the tests
+        return
+
+    # Skip all hardware tests
+    skip_hardware = pytest.mark.skip(
+        reason="need --hardware option or SIRIUSX_HARDWARE env var to run"
+    )
+    for item in items:
+        if "hardware" in item.keywords:
+            item.add_marker(skip_hardware)
 
 
 # =============================================================================

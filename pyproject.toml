@@ -39,3 +39,8 @@ where = ["src"]
 dev = [
     "pytest>=8.3.5",
 ]
+
+[tool.pytest.ini_options]
+markers = [
+    "hardware: marks tests as requiring Sirius X hardware (deselect with '-m \"not hardware\"')",
+]
